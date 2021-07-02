@@ -110,7 +110,8 @@ p{
 
 input[type=submit]{
 	height: 20%;
-	background-color: #EBB55F;
+/* 	background-color: #EBB55F; */
+	background-color:yellow;
 	border: none;
 	cursor: pointer;
 	color: white;
