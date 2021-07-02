@@ -20,7 +20,7 @@ $(document).ready(function() {
                 $.keyframe.define([{
                 name:'move',
                 from:{
-                    left: 400
+                    left: width * 0.8
                 },
                 to:{
                     left:-1 * length
