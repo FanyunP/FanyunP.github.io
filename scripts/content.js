@@ -12,8 +12,8 @@ let textGeo,textMesh1,textMat;
 let stats;
 let text = 'HELLO FUTURE';
 const height = 20,
-      size = 15,
-      hover = 30,
+      size = 5,
+      hover = 10,
       curveSegments = 4,
       bevelThickness = 2,
       bevelSize = 1.5;
@@ -90,7 +90,7 @@ function init(){
   meshKnot.position.set( 0, 5, 0 );
   scene.add( meshKnot );
 
-  textMat = new THREE.MeshPhongMaterial( { color: 0xffffff, flatShading: true } );
+  textMat = new THREE.MeshStandardMaterial( { color: 0xF0FF00, roughness: 0, metalness: 0 } );
   const loader = new TTFLoader();
   loader.load('./font/AlloyInk-nRLyO.ttf', function ( json ) {
 
