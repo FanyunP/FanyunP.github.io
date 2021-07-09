@@ -5,9 +5,21 @@ import Stats from './lib/stats.module.js';
 import { OrbitControls } from './lib/OrbitControls.js';
 import { RectAreaLightHelper } from './lib/RectAreaLightHelper.js';
 import { RectAreaLightUniformsLib } from './lib/RectAreaLightUniformsLib.js';
+import { TTFLoader } from './lib/TTFLoader.js';
 
 let renderer,scene,camera,light1, light2, light3, light4, meshKnot;
+let textGeo,textMesh1,textMat;
 let stats;
+let text = 'HELLO FUTURE';
+const height = 20,
+      size = 70,
+      hover = 30,
+      curveSegments = 4,
+      bevelThickness = 2,
+      bevelSize = 1.5;
+
+let font = null;
+const mirror = true;
 
 init();
 animate();
@@ -78,6 +90,15 @@ function init(){
   meshKnot.position.set( 0, 5, 0 );
   scene.add( meshKnot );
 
+  textMat = new THREE.MeshPhongMaterial( { color: 0xffffff, flatShading: true } );
+  const loader = new TTFLoader();
+  loader.load('../font/AlloyInk-nRLyO.ttf', function ( json ) {
+
+        font = new THREE.Font( json );
+        createText();
+
+        } );
+
   const controls = new OrbitControls( camera, renderer.domElement );
   controls.target.copy( meshKnot.position );
   controls.update();
@@ -87,6 +108,33 @@ function init(){
   // stats = new Stats();
   // document.body.appendChild( stats.dom );
 
+}
+
+function createText() {
+        textGeo = new THREE.TextGeometry(text,{
+                font:font,
+                size:size,
+                height:height,
+                curveSegments:curveSegments,
+
+                bevelThickness:bevelThickness,
+                bevelSize:bevelSize,
+                bevelEnabled:true
+
+        });
+        textGeo.computeBoundingBox();
+        textGeo.computeVertexNormals();
+
+        const centerOffset = - 0.5 * ( textGeo.boundingBox.max.x - textGeo.boundingBox.min.x );
+        textMesh1 = new THREE.Mesh( textGeo, textMat );
+        textMesh1.position.x = centerOffset;
+        textMesh1.position.y = hover;
+        textMesh1.position.z = 0;
+
+        textMesh1.rotation.x = 0;
+        textMesh1.rotation.y = Math.PI * 2;
+
+        scene.add( textMesh1 );
 }
 
 function onWindowResize() {
@@ -162,47 +210,3 @@ function generateTexture() {
         return canvas;
 
       }
-// function main() {
-//   const canvas = document.querySelector('#c');
-//   const renderer = new THREE.WebGLRenderer({canvas});
-
-//   const fov = 75;
-//   const aspect = 2;  // the canvas default
-//   const near = 0.1;
-//   const far = 50;
-//   const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-//   camera.position.z = 20;
-
-//   const scene = new THREE.Scene();
-//   scene.background = new THREE.Color('red');
-
-//   const geometry = new THREE.SphereGeometry();
-//   const material = new THREE.MeshBasicMaterial({color: 'yellow'});
-
-//   const mesh = new THREE.Mesh(geometry, material);
-//   scene.add(mesh);
-
-//   function resizeRendererToDisplaySize(renderer) {
-//     const canvas = renderer.domElement;
-//     const width = canvas.clientWidth;
-//     const height = canvas.clientHeight;
-//     const needResize = canvas.width !== width || canvas.height !== height;
-//     if (needResize) {
-//       renderer.setSize(width, height, false);
-//     }
-//     return needResize;
-//   }
-
-//   function render(time){
-//     if (resizeRendererToDisplaySize(renderer)) {
-//       const canvas = renderer.domElement;
-//       camera.aspect = canvas.clientWidth / canvas.clientHeight;
-//       camera.updateProjectionMatrix();
-//     }
-//     renderer.render(scene, camera);
-//     // requestAnimationFrame(render);
-//   }
-//   requestAnimationFrame(render);
-// }
-
-// main();
