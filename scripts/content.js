@@ -12,7 +12,7 @@ let textGeo,textMesh1,textMat;
 let stats;
 let text = 'HELLO FUTURE';
 const height = 20,
-      size = 70,
+      size = 15,
       hover = 30,
       curveSegments = 4,
       bevelThickness = 2,
@@ -53,9 +53,9 @@ function init(){
   rectLight3.position.set( 5, 5, 5 );
   scene.add( rectLight3 );
 
-  // scene.add( new RectAreaLightHelper( rectLight1 ) );
+  scene.add( new RectAreaLightHelper( rectLight1 ) );
   // scene.add( new RectAreaLightHelper( rectLight2 ) );
-  // scene.add( new RectAreaLightHelper( rectLight3 ) );
+  scene.add( new RectAreaLightHelper( rectLight3 ) );
 
   const sphere = new THREE.SphereGeometry( 0.5, 16, 8 );
   light1 = new THREE.PointLight( 0xff0040, 2, 50 );
