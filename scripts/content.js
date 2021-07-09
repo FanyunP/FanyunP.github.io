@@ -92,7 +92,7 @@ function init(){
 
   textMat = new THREE.MeshPhongMaterial( { color: 0xffffff, flatShading: true } );
   const loader = new TTFLoader();
-  loader.load('../font/AlloyInk-nRLyO.ttf', function ( json ) {
+  loader.load('./font/AlloyInk-nRLyO.ttf', function ( json ) {
 
         font = new THREE.Font( json );
         createText();
