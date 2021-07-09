@@ -14,9 +14,9 @@ let text = 'HELLO FUTURE';
 const height = 20,
       size = 5,
       hover = 10,
-      curveSegments = 4,
-      bevelThickness = 2,
-      bevelSize = 1.5;
+      curveSegments = 2,
+      bevelThickness = 0.5,
+      bevelSize = 0.5;
 
 let font = null;
 const mirror = true;
@@ -163,21 +163,21 @@ function render(){
         // const delta = clock.getDelta();
         meshKnot.rotation.y = time;
 
-        light1.position.x = Math.sin( time * 0.7 ) * 12;
-        light1.position.y = Math.cos( time * 0.5 ) * 16;
-        light1.position.z = Math.cos( time * 0.3 ) * 12;
+        light1.position.x = Math.sin( time * 0.7 ) * 30;
+        light1.position.y = Math.cos( time * 0.5 ) * 40;
+        light1.position.z = Math.cos( time * 0.3 ) * 30;
 
-        light2.position.x = Math.cos( time * 0.3 ) * 12;
-        light2.position.y = Math.sin( time * 0.5 ) * 16;
-        light2.position.z = Math.sin( time * 0.7 ) * 12;
+        light2.position.x = Math.cos( time * 0.3 ) * 30;
+        light2.position.y = Math.sin( time * 0.5 ) * 40;
+        light2.position.z = Math.sin( time * 0.7 ) * 30;
 
-        light3.position.x = Math.sin( time * 0.7 ) * 12;
-        light3.position.y = Math.cos( time * 0.3 ) * 16;
-        light3.position.z = Math.sin( time * 0.5 ) * 12;
+        light3.position.x = Math.sin( time * 0.7 ) * 30;
+        light3.position.y = Math.cos( time * 0.3 ) * 40;
+        light3.position.z = Math.sin( time * 0.5 ) * 30;
 
-        light4.position.x = Math.sin( time * 0.3 ) * 12;
-        light4.position.y = Math.cos( time * 0.7 ) * 16;
-        light4.position.z = Math.sin( time * 0.5 ) * 12;
+        light4.position.x = Math.sin( time * 0.3 ) * 30;
+        light4.position.y = Math.cos( time * 0.7 ) * 40;
+        light4.position.z = Math.sin( time * 0.5 ) * 30;
 
         renderer.render( scene, camera );
 }
