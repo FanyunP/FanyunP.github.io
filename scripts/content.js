@@ -1,10 +1,10 @@
-import * as THREE from 'js/three.module.js';
+import * as THREE from './js/three.module.js';
 
-import Stats from 'lib/stats.module.js';
+import Stats from './lib/stats.module.js';
 
-import { OrbitControls } from 'lib/OrbitControls.js';
-import { RectAreaLightHelper } from 'lib/RectAreaLightHelper.js';
-import { RectAreaLightUniformsLib } from 'lib/RectAreaLightUniformsLib.js';
+import { OrbitControls } from './lib/OrbitControls.js';
+import { RectAreaLightHelper } from './lib/RectAreaLightHelper.js';
+import { RectAreaLightUniformsLib } from './lib/RectAreaLightUniformsLib.js';
 
 let renderer,scene,camera,light1, light2, light3, light4, meshKnot;
 let stats;
