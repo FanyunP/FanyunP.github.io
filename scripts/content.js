@@ -5,7 +5,7 @@ import Stats from './lib/stats.module.js';
 import { OrbitControls } from './lib/OrbitControls.js';
 import { RectAreaLightHelper } from './lib/RectAreaLightHelper.js';
 import { RectAreaLightUniformsLib } from './lib/RectAreaLightUniformsLib.js';
-import { TTFLoader } from './font/TTFLoader.js';
+import { TTFLoader } from './lib/TTFLoader.js';
 
 let renderer,scene,camera,light1, light2, light3, light4, meshKnot;
 let textGeo,textMesh1,textMat;
