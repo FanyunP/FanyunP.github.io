@@ -11,9 +11,9 @@ let renderer,scene,camera,light1, light2, light3, light4, meshKnot;
 let textGeo,textMesh1,textMat;
 let stats;
 let text = 'HELLO FUTURE';
-const height = 20,
+const height = 5,
       size = 5,
-      hover = 10,
+      hover = 5,
       curveSegments = 2,
       bevelThickness = 0.5,
       bevelSize = 0.5;
