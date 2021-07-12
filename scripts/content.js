@@ -11,7 +11,7 @@ let renderer,scene,camera,light1, light2, light3, light4, meshKnot;
 let textGeo,textMesh1,textMat;
 let stats;
 let text = 'HELLO FUTURE';
-const height = 5,
+const height = 1,
       size = 5,
       hover = 5,
       curveSegments = 2,
@@ -132,7 +132,7 @@ function createText() {
         textMesh1.position.z = 0;
 
         textMesh1.rotation.x = 0;
-        textMesh1.rotation.y = Math.PI * 2;
+//         textMesh1.rotation.y = Math.PI * 2;
 
         scene.add( textMesh1 );
 }
