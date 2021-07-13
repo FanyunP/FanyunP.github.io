@@ -13,7 +13,7 @@ import {
 	NearestFilter,
 	DynamicDrawUsage,
 	Matrix4
-} from '../js/three.module.js';
+} from '//fanyunp.github.io/scripts/js/three.module.js';
 
 /**
  * Make a new DataTexture to store the descriptions of the curves.
