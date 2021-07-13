@@ -92,7 +92,7 @@ function init() {
 				//
 
 	const loader = new THREE.FontLoader();
-	loader.load( '../Raleway Black_Regular.json', function ( font ) {
+	loader.load( './font/dabangshu.json', function ( font ) {
 
 	const geometry = new THREE.TextGeometry( 'Hello three.js!', {
 		font: font,
