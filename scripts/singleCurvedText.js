@@ -2,6 +2,7 @@ import * as THREE from './js/three.module.js';
 import Stats from './lib/stats.module.js';
 import { TransformControls } from './lib/TransformControls.js';
 import { Flow  } from './lib/CurveModifier.js'
+import { OutlineEffect } from './lib/OutlineEffect.js'
 
 const ACTION_SELECT = 1, ACTION_NONE = 0;
 const curveHandles = [];
@@ -14,7 +15,10 @@ let scene,
 	rayCaster,
 	control,
 	flow,
+	effect,
 	action = ACTION_NONE;
+let particleLight;
+
 
 init();
 animate();
@@ -29,12 +33,15 @@ function init() {
 		1,
 		1000
 	);
-	camera.position.set( 2, 2, 4 );
-	camera.lookAt( scene.position );
-
+	// camera.position.set( 2, 2, 4 );
+	camera.position.set( 0.5, 0, 5 );
+	// camera.lookAt( scene.position );
+	scene.background = new THREE.Color( 0x5ec3e7 );
 	const initialPoints = [
 		{ x: 1, y: 0, z: - 1 },
+		// { x: 1, y: 0.5, z: - 1 },
 		{ x: 1, y: 0, z: 1 },
+		// { x: 1, y: -0.5, z: - 1 },
 		{ x: - 1, y: 0, z: 1 },
 		{ x: - 1, y: 0, z: - 1 },
 	];
@@ -47,16 +54,15 @@ function init() {
 		const handle = new THREE.Mesh( boxGeometry, boxMaterial );
 		handle.position.copy( handlePos );
 		curveHandles.push( handle );
-		scene.add( handle );
+		// scene.add( handle );
 
 	}
 
 	const curve = new THREE.CatmullRomCurve3(
 		curveHandles.map( ( handle ) => handle.position )
 		);
-	curve.curveType = 'catmullrom';
-	curve.tension = 1.0;
-	curve.closed = false;
+	curve.curveType = 'centripetal';
+	curve.closed = true;
 
 	const points = curve.getPoints( 50 );
 	const line = new THREE.LineLoop(
@@ -64,25 +70,25 @@ function init() {
 		new THREE.LineBasicMaterial( { color: 0x00ff00 } )
 	);
 
-	scene.add( line );
+	// scene.add( line );
 
 				//
 
-	const light = new THREE.DirectionalLight( 0xffaa33 );
-	light.position.set( - 10, 10, 10 );
-	light.intensity = 1.0;
-	scene.add( light );
+	// const light = new THREE.DirectionalLight( 0xf0ea70 );
+	// light.position.set( - 10, 10, 10 );
+	// light.intensity = 1.0;
+	// scene.add( light );
 
-	const light2 = new THREE.AmbientLight( 0x003973 );
-	light2.intensity = 1.0;
-	scene.add( light2 );
+	// const light2 = new THREE.AmbientLight( 0xdc4d31 );
+	// light2.intensity = 1.0;
+	// scene.add( light2 );
 
 				//
 
 	const loader = new THREE.FontLoader();
 	loader.load( './font/Sinisuka_Regular.json', function ( font ) {
 
-	const geometry = new THREE.TextGeometry( 'HELLO FUTURE', {
+	const geometry = new THREE.TextGeometry( 'Hello \nFuture', {
 			font: font,
 			size: 0.2,
 			height: 0.05,
@@ -94,11 +100,25 @@ function init() {
 			bevelSegments: 5,
 		} );
 
-	geometry.rotateX( Math.PI );
+	// geometry.rotateX( Math.PI );
 
-	const material = new THREE.MeshStandardMaterial( {
-			color: 0x99ffff
-	} );
+	const colors = new Uint8Array(3);
+	for(let c = 0; c <= colors.length; c++){
+		colors[c] = (c/colors.length) * 256;
+	}
+	const gradientMap = new THREE.DataTexture( colors, colors.length, 1, THREE.LuminanceFormat );
+	gradientMap.minFilter = THREE.NearestFilter;
+	gradientMap.magFilter = THREE.NearestFilter;
+	gradientMap.generateMipmaps = false;
+
+	const diffuseColor = new THREE.Color().setHSL( 0.1, 1, 0.5 ).multiplyScalar( 0.9 );
+	const material = new THREE.MeshToonMaterial({
+		color: diffuseColor,
+		gradientMap:gradientMap
+	});
+	// const material = new THREE.MeshStandardMaterial( {
+	// 		color: 0xe3b22a
+	// } );
 
 	const objectToCurve = new THREE.Mesh( geometry, material );
 
@@ -106,14 +126,42 @@ function init() {
 	flow.updateCurve( 0, curve );
 	scene.add( flow.object3D );
 
+	const outlineMaterial = new THREE.MeshBasicMaterial({
+		color: 0xff2400,
+		side: THREE.BackSide
+	});
+
+	const outlineMesh1 = new THREE.Mesh(geometry,outlineMaterial);
+	outlineMesh1.position.x -= 0.01;
+	outlineMesh1.scale.multiplyScalar(1.06);
+	scene.add(outlineMesh1);
+
 	} );
 
 				//
+
+	particleLight = new THREE.Mesh(
+					new THREE.SphereGeometry( 0.05, 10, 10 ),
+					new THREE.MeshBasicMaterial( { color: 0xefea73 } )
+				);
+	scene.add( particleLight );
+
+	particleLight.position.x = -0.5;
+	particleLight.position.y = 1;
+	particleLight.position.z = -1;
+
+	scene.add( new THREE.AmbientLight( 0xf4f0c3 ) );
+	const pointLight = new THREE.PointLight( 0xffffff, 2, 800 );
+	particleLight.add( pointLight );
 
 	renderer = new THREE.WebGLRenderer( { antialias: true } );
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	document.body.appendChild( renderer.domElement );
+
+	//effect
+	renderer.outputEncoding = THREE.sRGBEncoding;
+	effect = new OutlineEffect( renderer );
 
 	renderer.domElement.addEventListener( 'pointerdown', onPointerDown );
 
@@ -187,7 +235,10 @@ function animate() {
 function render() {
 
 	renderer.render( scene, camera );
-
+	const timer = Date.now() * 0.00005;
+	// particleLight.position.x = Math.sin( timer * 7 ) * 3;
+	// particleLight.position.y = Math.cos( timer * 5) * 4;
+	// particleLight.position.z = Math.cos( timer * 3 ) * 3;
 	stats.update();
-
+	// effect.render( scene, camera );
 }
