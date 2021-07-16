@@ -80,7 +80,7 @@ function init() {
 				//
 
 	const loader = new THREE.FontLoader();
-	loader.load( './font/NetSinisuka.json', function ( font ) {
+	loader.load( './font/Sinisuka_Regular.json', function ( font ) {
 
 	const geometry = new THREE.TextGeometry( 'HELLO FUTURE', {
 			font: font,
