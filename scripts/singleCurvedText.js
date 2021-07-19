@@ -122,9 +122,9 @@ function init() {
 
 	const objectToCurve = new THREE.Mesh( geometry, material );
 
-	flow = new Flow( objectToCurve );
-	flow.updateCurve( 0, curve );
-	scene.add( flow.object3D );
+// 	flow = new Flow( objectToCurve );
+// 	flow.updateCurve( 0, curve );
+// 	scene.add( flow.object3D );
 
 	const outlineMaterial = new THREE.MeshBasicMaterial({
 		color: 0xff2400,
@@ -207,26 +207,26 @@ function animate() {
 
 	requestAnimationFrame( animate );
 
-	if ( action === ACTION_SELECT ) {
+// 	if ( action === ACTION_SELECT ) {
 
-	rayCaster.setFromCamera( mouse, camera );
-	action = ACTION_NONE;
-	const intersects = rayCaster.intersectObjects( curveHandles );
-	if ( intersects.length ) {
+// 	rayCaster.setFromCamera( mouse, camera );
+// 	action = ACTION_NONE;
+// 	const intersects = rayCaster.intersectObjects( curveHandles );
+// 	if ( intersects.length ) {
 
-		const target = intersects[ 0 ].object;
-		control.attach( target );
-		scene.add( control );
+// 		const target = intersects[ 0 ].object;
+// 		control.attach( target );
+// 		scene.add( control );
 
-		}
+// 		}
 
-	}
+// 	}
 
-	if ( flow ) {
+// 	if ( flow ) {
 
-// 		flow.moveAlongCurve( 0.003 );
+// // 		flow.moveAlongCurve( 0.003 );
 
-	}
+// 	}
 
 	render();
 
