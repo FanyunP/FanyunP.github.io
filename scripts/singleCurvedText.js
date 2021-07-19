@@ -121,7 +121,7 @@ function init() {
 	// } );
 
 	const objectToCurve = new THREE.Mesh( geometry, material );
-
+	scene.add( objectToCurve );
 // 	flow = new Flow( objectToCurve );
 // 	flow.updateCurve( 0, curve );
 // 	scene.add( flow.object3D );
