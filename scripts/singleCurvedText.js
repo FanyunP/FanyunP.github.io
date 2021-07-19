@@ -224,7 +224,7 @@ function animate() {
 
 	if ( flow ) {
 
-		flow.moveAlongCurve( 0.003 );
+// 		flow.moveAlongCurve( 0.003 );
 
 	}
 
