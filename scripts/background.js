@@ -2,6 +2,7 @@ import * as THREE from './js/three.module.js';
 import {fragmentShader} from './skyShader.js';
 
 let container,camera,scene,renderer;
+let uniforms;
 
 init();
 animate();
@@ -25,7 +26,7 @@ function init() {
 	const scene = new THREE.Scene();
 	const plane = new THREE.PlaneGeometry(2, 2);
 
-	const uniforms = {
+	uniforms = {
 	    iTime: { value: 0 },
 	    iResolution:  { value: new THREE.Vector3() },
 	  };
