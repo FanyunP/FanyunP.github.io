@@ -4,15 +4,15 @@ export const fragmentShader = () => {
 
   		uniform vec3 iResolution;
   		uniform float iTime;
-  		const float cloudscale = 1.1;
+  		const float cloudscale = 1.6;
 		const float speed = 0.03;
-		const float clouddark = 0.5;
-		const float cloudlight = 0.3;
-		const float cloudcover = 0.2;
-		const float cloudalpha = 8.0;
-		const float skytint = 0.5;
-		const vec3 skycolour1 = vec3(0.2, 0.4, 0.6);
-		const vec3 skycolour2 = vec3(0.4, 0.7, 1.0);
+		const float clouddark = 0.7;
+		const float cloudlight = 0.9;
+		const float cloudcover = 0.1;
+		const float cloudalpha = 1.5;
+		const float skytint = 0.6;
+		const vec3 skycolour1 = vec3(0.32, 0.89, 0.97);
+		const vec3 skycolour2 = vec3(0.09, 0.8, 0.94);
 
 		const mat2 m = mat2( 1.6,  1.2, -1.2,  1.6 );
 
