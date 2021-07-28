@@ -16,6 +16,7 @@ let scene,
 	control,
 	flow,
 	effect,
+  container,
 	action = ACTION_NONE;
 let particleLight;
 
@@ -24,7 +25,12 @@ init();
 animate();
 
 function init() {
-
+  container = document.getElementById( 'text' );
+  renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
+	renderer.setPixelRatio( window.devicePixelRatio );
+	renderer.setSize( window.innerWidth, window.innerHeight );
+	container.appendChild( renderer.domElement );
+  
 	scene = new THREE.Scene();
 
 	camera = new THREE.PerspectiveCamera(
@@ -33,10 +39,10 @@ function init() {
 		1,
 		1000
 	);
-	// camera.position.set( 2, 2, 4 );
+
 	camera.position.set( 0.5, 0, 5 );
 	// camera.lookAt( scene.position );
-	scene.background = new THREE.Color( 0x5ec3e7 );
+	// scene.background = new THREE.Color( 0x5ec3e7 );
 	const initialPoints = [
 		{ x: 1, y: 0, z: - 1 },
 		// { x: 1, y: 0.5, z: - 1 },
@@ -69,21 +75,6 @@ function init() {
 		new THREE.BufferGeometry().setFromPoints( points ),
 		new THREE.LineBasicMaterial( { color: 0x00ff00 } )
 	);
-
-	// scene.add( line );
-
-				//
-
-	// const light = new THREE.DirectionalLight( 0xf0ea70 );
-	// light.position.set( - 10, 10, 10 );
-	// light.intensity = 1.0;
-	// scene.add( light );
-
-	// const light2 = new THREE.AmbientLight( 0xdc4d31 );
-	// light2.intensity = 1.0;
-	// scene.add( light2 );
-
-				//
 
 	const loader = new THREE.FontLoader();
 	loader.load( './font/Sinisuka_Regular.json', function ( font ) {
@@ -153,12 +144,6 @@ function init() {
 	scene.add( new THREE.AmbientLight( 0xf4f0c3 ) );
 	const pointLight = new THREE.PointLight( 0xffffff, 2, 800 );
 	particleLight.add( pointLight );
-
-	renderer = new THREE.WebGLRenderer( { antialias: true } );
-	renderer.setPixelRatio( window.devicePixelRatio );
-	renderer.setSize( window.innerWidth, window.innerHeight );
-	document.body.appendChild( renderer.domElement );
-
 	//effect
 	renderer.outputEncoding = THREE.sRGBEncoding;
 	effect = new OutlineEffect( renderer );
@@ -179,8 +164,8 @@ function init() {
 
 	} );
 
-	stats = new Stats();
-	document.body.appendChild( stats.dom );
+	// stats = new Stats();
+	// document.body.appendChild( stats.dom );
 
 	window.addEventListener( 'resize', onWindowResize );
 
@@ -206,28 +191,6 @@ function onPointerDown( event ) {
 function animate() {
 
 	requestAnimationFrame( animate );
-
-// 	if ( action === ACTION_SELECT ) {
-
-// 	rayCaster.setFromCamera( mouse, camera );
-// 	action = ACTION_NONE;
-// 	const intersects = rayCaster.intersectObjects( curveHandles );
-// 	if ( intersects.length ) {
-
-// 		const target = intersects[ 0 ].object;
-// 		control.attach( target );
-// 		scene.add( control );
-
-// 		}
-
-// 	}
-
-// 	if ( flow ) {
-
-// // 		flow.moveAlongCurve( 0.003 );
-
-// 	}
-
 	render();
 
 }
@@ -236,9 +199,4 @@ function render() {
 
 	renderer.render( scene, camera );
 	const timer = Date.now() * 0.00005;
-	// particleLight.position.x = Math.sin( timer * 7 ) * 3;
-	// particleLight.position.y = Math.cos( timer * 5) * 4;
-	// particleLight.position.z = Math.cos( timer * 3 ) * 3;
-	stats.update();
-	// effect.render( scene, camera );
 }
