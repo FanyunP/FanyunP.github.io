@@ -55,7 +55,7 @@ const citybkg = {
 	y : 200,
 	w : 0,
 	h : 300,
-	speed : 0.1,
+	speed : 0.5,
 	draw : function(){
 		this.w = this.h * (citybkgimg.width/citybkgimg.height);
 		// console.log(this.w);
@@ -64,7 +64,7 @@ const citybkg = {
 	},
 
 	update : function(){
-		if(this.w > 0){
+		if(this.w > 0 && state.current < state.over){
 			this.x -= this.speed;
 			if(this.x <= -1 * this.w + cvs.width){
 				this.x = 0;
@@ -81,14 +81,14 @@ const citybkg2 = {
 	y : 120,
 	w : 0,
 	h : 360,
-	speed : 0.35,
+	speed : 0.95,
 	draw : function(){
 		this.w = this.h * (citybkgimg2.width/citybkgimg2.height);
 		ctx.drawImage(citybkgimg2,this.x,this.y,this.w,this.h);
 	},
 
 	update : function(){
-		if(this.w > 0){
+		if(this.w > 0 && state.current < state.over){
 			this.x -= this.speed;
 			if(this.x <= -1 * this.w + cvs.width){
 				this.x = 0;
@@ -106,14 +106,14 @@ const bridge = {
 	w : 0,
 	h : 120,
 
-	speed : 0.3,
+	speed : 0.8,
 	draw : function(){
 		this.w = this.h * (bridgeimg.width/bridgeimg.height);
 		ctx.drawImage(bridgeimg,this.x,this.y,this.w,this.h);
 	},
 
 	update : function(){
-		if(this.w > 0){
+		if(this.w > 0 && state.current < state.over){
 			this.x -= this.speed;
 			if(this.x <= -1 * this.w + cvs.width){
 				this.x = 0;
@@ -174,7 +174,7 @@ const stars = {
 	position_star : [],
 	size_star : [],
 	maxH_star : 80,
-	speed_star : 0.3,
+	speed_star : 1,
 	frameSpeed : 5,
 	burststars:{
 		size: [],
@@ -198,7 +198,7 @@ const stars = {
 	},
 	size_cloud : [],
 	maxH_cloud :150,
-	speed_cloud : 0.65,
+	speed_cloud : 1.5,
 	draw : function(){
 		// console.log(this.position.length);
 		for(let i = 0; i < this.position_star.length; i++){
@@ -241,14 +241,14 @@ const stars = {
 	},
 
 	update : function(){
-		if(frames%300 == 0){
+		if(frames%200 == 0){
 			this.position_star.push({
 				x : getRandomInt(260,cvs.width),
 				y : getRandomInt(20,this.maxH_star)
 			});
 			this.size_star.push(getRandomInt(15,28));
 		}
-		if(frames%700 == 0){
+		if(frames%600 == 0){
 			let curRam = getRandomInt(3,8);
 			this.position_cloud.push({
 				x : getRandomInt(200,cvs.width),
@@ -284,6 +284,9 @@ const stars = {
 					if(starCounter < 5){
 						score.score_state[starCounter] = 1;
 						starCounter += 1;
+						if(starCounter == 5 &&!santaSleigh.isLandingInitialized){
+							state.current = state.end;
+						}
 					}
 					this.burststars.pos.push(this.position_star[i]);
 					this.burststars.size.push(this.size_star[i]); 
@@ -320,9 +323,6 @@ const stars = {
 					this.size_cloud.shift();
 				}
 			}
-			if(starCounter == 5 && !santaSleigh.isLandingInitialized){
-				state.current = state.end;
-			}
 		}
 		this.burst();
 	}
@@ -351,14 +351,14 @@ const forgroundcity = {
 	w : 0,
 	h : 260,
 
-	speed : 0.35,
+	speed : 0.75,
 	draw : function(){
 		this.w = this.h * (forgroundcityimg.width/forgroundcityimg.height);
 		ctx.drawImage(forgroundcityimg,this.x,this.y,this.w,this.h);
 	},
 
 	update : function(){
-		if(this.w > 0){
+		if(this.w > 0 && state.current < state.over){
 			this.x -= this.speed;
 			if(this.x <= -1 * this.w + cvs.width){
 				this.x = 0;
@@ -393,8 +393,8 @@ const santaSleigh = {
 	frameSpeed : 5,
 	forzeFrame : 0,
 
-	gravity : 0.05,
-	jump : 2.5,
+	gravity : 0.2,
+	jump : 4,
 	speed : 0,
 	maxH0 : 200,
 	maxH:260,
@@ -528,7 +528,7 @@ const state = {
 
 //Game Instruction
 const textInstructor = {
-	content : "Click to Start the Game",
+	content : ["Click to Start the Game","Click to ReStart the Game"],
 	font : '20px Arial',
 	color : "white",
 	x : 160,
@@ -539,7 +539,9 @@ const textInstructor = {
 			ctx.font = this.font;
 			ctx.fillStyle = this.color;
 			ctx.textAlign = "center";
-			ctx.fillText(this.content, this.x, this.y);
+			ctx.fillText(this.content[0], this.x, this.y);
+		}else if(state.current == state.over){
+			ctx.fillText(this.content[1], this.x, this.y);
 		}
 	},
 }
@@ -555,7 +557,14 @@ document.addEventListener("click",function(evt){
 			break;
 		case state.end:
 			santaSleigh.loadLandig();
-			// state.current = state.getReady;
+			break;
+		case state.over : 
+			state.current = state.getReady;
+			frames = 0;
+			starCounter = 0;
+			score.score_state = [0,0,0,0,0];
+			macys.x = 150;
+			santaSleigh.isLandingInitialized = false;
 			break;
 	}
 })
