@@ -1,13 +1,21 @@
 const cvs = document.getElementById("gamecanvas");
 const ctx = cvs.getContext("2d");
 
+cvs.width = window.innerWidth;
+cvs.height = window.innerHeight;
+
 let frames = 0;
 let starCounter = 0;
+let isWindowOpened = false;
 
 function getRandomInt(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min) + min); 
+}
+
+function map_range(value, low1, high1, low2, high2) {
+    return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
 }
 
 //BACKGROUND sky
@@ -19,10 +27,10 @@ for(let i = 1; i <= 141; i++){
 }
 
 const bgsky = {
-	imgx : 256,
+	imgx : 0,//256
 	imgy : 0,
-	imgw : cvs.width * 2.2,
-	imgh : cvs.height * 2.2,
+	imgw : 1920,
+	imgh : this.imgw * (cvs.height/cvs.width),
 
 	x : 0,
 	y : 0,
@@ -34,6 +42,7 @@ const bgsky = {
 	frameSpeed : 5,
 
 	draw : function(){
+		// this.imgw = this.imgh * (cvs.width/cvs.height);
 		ctx.drawImage(sky[this.frame],this.imgx,this.imgy,this.imgw,this.imgh,this.x,this.y,this.w,this.h);
 	},
 
@@ -42,6 +51,12 @@ const bgsky = {
 		this.frame += frames % this.frameSpeed == 0 ? 1 : 0;
 		//frames goes from 1 to 141, then again to 0
 		this.frame = this.frame % this.animationFrames;
+	},
+
+	resize : function(){
+		this.imgh = this.imgw * (cvs.height/cvs.width);
+		this.h = cvs.height;
+		this.w = cvs.width;
 	}
 }
 
@@ -51,13 +66,12 @@ const citybkgimg = new Image();
 citybkgimg0.src = './img/citybkg0.png';
 citybkgimg.src = './img/citybkg.png';
 const citybkg = {
-	x : 0,
-	y : 200,
 	w : 0,
-	h : 300,
+	h : cvs.height * 0.5,
+	x : 0,
+	y : 0,
 	speed : 0.5,
 	draw : function(){
-		this.w = this.h * (citybkgimg.width/citybkgimg.height);
 		// console.log(this.w);
 		ctx.drawImage(citybkgimg0,this.x-150,this.y-50,this.w,this.h);
 		ctx.drawImage(citybkgimg,this.x,this.y,this.w,this.h);
@@ -70,6 +84,12 @@ const citybkg = {
 				this.x = 0;
 			}
 		}
+	},
+
+	resize : function(){
+		this.h = cvs.height * 0.5;
+		this.w = this.h * (citybkgimg.width/citybkgimg.height);
+		this.y = cvs.height - this.h;
 	}
 }
 
@@ -77,13 +97,12 @@ const citybkg = {
 const citybkgimg2 = new Image();
 citybkgimg2.src = './img/citybkg2.png';
 const citybkg2 = {
-	x : 0,
-	y : 120,
 	w : 0,
-	h : 360,
+	h : cvs.height * 0.65,
+	x : 0,
+	y : cvs.height - this.h,
 	speed : 0.95,
 	draw : function(){
-		this.w = this.h * (citybkgimg2.width/citybkgimg2.height);
 		ctx.drawImage(citybkgimg2,this.x,this.y,this.w,this.h);
 	},
 
@@ -94,6 +113,12 @@ const citybkg2 = {
 				this.x = 0;
 			}
 		}
+	},
+
+	resize : function(){
+		this.h = cvs.height * 0.65,
+		this.y = cvs.height - this.h;
+		this.w = this.h * (citybkgimg2.width/citybkgimg2.height);
 	}
 }
 
@@ -101,14 +126,13 @@ const citybkg2 = {
 const bridgeimg = new Image();
 bridgeimg.src = './img/bridges.png';
 const bridge = {
-	x : -100,
-	y : 380,
 	w : 0,
-	h : 120,
+	h : cvs.height * 0.2,
+	x : -100,
+	y : cvs.height - this.h,
 
 	speed : 0.8,
 	draw : function(){
-		this.w = this.h * (bridgeimg.width/bridgeimg.height);
 		ctx.drawImage(bridgeimg,this.x,this.y,this.w,this.h);
 	},
 
@@ -119,6 +143,12 @@ const bridge = {
 				this.x = 0;
 			}
 		}
+	},
+
+	resize:function(){
+		this.h = cvs.height * 0.2;
+		this.y = cvs.height - this.h;
+		this.w = this.h * (bridgeimg.width/bridgeimg.height);
 	}
 }
 
@@ -190,7 +220,7 @@ const stars = {
 		frame : [],
 		pos : []
 	},
-
+	ratio : 1,
 	position_cloud : [],
 	origin_size : {
 		x : 784 * 0.02,
@@ -243,27 +273,27 @@ const stars = {
 	update : function(){
 		if(frames%200 == 0){
 			this.position_star.push({
-				x : getRandomInt(260,cvs.width),
+				x : getRandomInt(cvs.width * 0.9,cvs.width),
 				y : getRandomInt(20,this.maxH_star)
 			});
-			this.size_star.push(getRandomInt(15,28));
+			this.size_star.push(getRandomInt(15,28) * this.ratio);
 		}
 		if(frames%600 == 0){
 			let curRam = getRandomInt(3,8);
 			this.position_cloud.push({
-				x : getRandomInt(200,cvs.width),
+				x : getRandomInt(cvs.width * 0.95,cvs.width),
 				y : getRandomInt(60,this.maxH_cloud)
 			});
 			this.size_cloud.push({
-				w : this.origin_size.x * curRam,
-				h : this.origin_size.y * curRam
+				w : this.origin_size.x * curRam * this.ratio,
+				h : this.origin_size.y * curRam * this.ratio
 			});
 		}
 
 		let curThreshold = {
 			xmin : santaSleigh.x,
 			xmax : santaSleigh.x + (santaSleigh.origin_size.w * santaSleigh.size_ratio) * 0.9,
-			ymin : santaSleigh.y + 10,
+			ymin : santaSleigh.y,
 			ymax : santaSleigh.y + (santaSleigh.origin_size.h * santaSleigh.size_ratio) * 0.8//+ (santaSleigh.origin_size.h * santaSleigh.size_ratio)/2
 		}
 		// console.log(curThreshold.ymin);
@@ -325,6 +355,15 @@ const stars = {
 			}
 		}
 		this.burst();
+	},
+
+	resize : function(){
+		this.ratio = 1 + (cvs.width-320)/320 * 0.15;
+		if(this.ratio <= 1){
+			this.ratio = 1;
+		}
+		this.maxH_star = cvs.height * 0.25;
+		this.maxH_cloud = cvs.height * 0.3;
 	}
 }
 
@@ -346,14 +385,13 @@ function collisionDetection(threshold,input,size){
 const forgroundcityimg = new Image();
 forgroundcityimg.src = './img/forgroundcity.png';
 const forgroundcity = {
-	x : 0,
-	y : 220,
 	w : 0,
-	h : 260,
+	h : cvs.height * 0.45,
+	x : 0,
+	y : cvs.height - this.h,
 
 	speed : 0.75,
 	draw : function(){
-		this.w = this.h * (forgroundcityimg.width/forgroundcityimg.height);
 		ctx.drawImage(forgroundcityimg,this.x,this.y,this.w,this.h);
 	},
 
@@ -364,6 +402,12 @@ const forgroundcity = {
 				this.x = 0;
 			}
 		}
+	},
+
+	resize : function(){
+		this.h = cvs.height * 0.45;
+		this.y = cvs.height - this.h;
+		this.w = this.h * (forgroundcityimg.width/forgroundcityimg.height);
 	}
 }
 
@@ -382,13 +426,13 @@ for(let i = 1 ; i <= 68; i++){
 	landing.push(curframe);
 }
 const santaSleigh = {
-	x : 100,
-	y : 100,//50
+	x : cvs.width * 0.5,
+	y : cvs.height * 0.5,//50
 	origin_size : {
-		w : 200,
+		w : 240,
 		h : 100
 	},
-	size_ratio : 0.8,
+	size_ratio : 1,
 	frame : 0,
 	frameSpeed : 5,
 	forzeFrame : 0,
@@ -406,9 +450,12 @@ const santaSleigh = {
 		// path = dir + (this.frame + 1) + fileextension;
 		// santa.src = path;
 		if(state.current != state.end){
-			ctx.drawImage(santa[this.frame],568,358,800,360,this.x,this.y,this.origin_size.w * this.size_ratio,this.origin_size.h * this.size_ratio);
+			ctx.drawImage(santa[this.frame],590,410,710,260,this.x,this.y,this.origin_size.w * this.size_ratio,this.origin_size.h * this.size_ratio);
+			// ctx.beginPath();
+			// ctx.rect(this.x,this.y,this.origin_size.w * this.size_ratio,this.origin_size.h * this.size_ratio);
+			// ctx.stroke();
 		}else{
-			ctx.drawImage(landing[this.frame],0,0,800,360,this.x,this.y,this.origin_size.w * this.size_ratio,this.origin_size.h * this.size_ratio);
+			ctx.drawImage(landing[this.frame],50,60,710,260,this.x,this.y,this.origin_size.w * this.size_ratio,this.origin_size.h * this.size_ratio);
 		}
 	},
 
@@ -449,6 +496,16 @@ const santaSleigh = {
 	},
 
 	loadLandig : function(){
+	},
+
+	resize : function(){
+		this.size_ratio = 1 + (cvs.width-320)/320 * 0.1;
+		if(this.size_ratio <= 0.8){
+			this.size_ratio = 0.8;
+		}
+		this.x = (cvs.width - this.origin_size.w * this.size_ratio) * 0.5; 
+		this.y = (cvs.height - this.origin_size.h * this.size_ratio) * 0.5;
+		this.maxH0 = cvs.height * 0.4;
 	}
 
 }
@@ -484,6 +541,12 @@ const win = {
 			this.frame += frames % this.frameSpeed == 0 ? 1 : 0;
 			this.frame = this.frame % winimg.length;
 		}
+	},
+
+	resize : function(){
+			this.ratio = cvs.width/this.origin_size.w;
+			this.pos.x = (cvs.width - this.origin_size.w * this.ratio) * 0.5; 
+			this.pos.y = (cvs.height - this.origin_size.h * this.ratio) * 0.5;
 	}
 }
 
@@ -501,19 +564,33 @@ const score = {
 		x : 143,
 		y : 108
 	},
+	pos:{
+		x : 10,
+		y : 10,
+		space : 30
+	},
 	ratio : 0.25,
 	num : 5,
 	score_state : [0,0,0,0,0],
 
 	draw : function(){
+		// this.ratio = (cvs.width - 320)/
 		for(let i = 0 ; i < this.num; i++){
 			let curPos = {
-				x : 30 * i + 10,
-				y : 10
+				x : this.pos.space * i + this.pos.x,
+				y : this.pos.x
 			}
 			// console.log(this.score_state[i]);
 			ctx.drawImage(scoreimg[this.score_state[i]],curPos.x,curPos.y,this.origin_size.x * this.ratio,this.origin_size.y * this.ratio);
 		}
+	},
+
+	resize : function(){
+		this.ratio = 0.25 + (cvs.width - 320)/320 * 0.05;
+		if(this.ratio <= 0.25){
+			this.ratio = 0.25;
+		}
+		this.pos.space = 30 * (this.ratio/0.25);
 	}
 }
 
@@ -529,10 +606,10 @@ const state = {
 //Game Instruction
 const textInstructor = {
 	content : ["Click to Start the Game","Click to ReStart the Game"],
-	font : '20px Arial',
+	font : 0,
 	color : "white",
-	x : 160,
-	y : 450,
+	x : 0,
+	y : 0,
 
 	draw : function(){
 		if(state.current == state.getReady){
@@ -544,6 +621,18 @@ const textInstructor = {
 			ctx.fillText(this.content[1], this.x, this.y);
 		}
 	},
+
+	resize : function() {
+		let cursize = (cvs.height * 0.04);
+		if(cursize >= 35){
+			cursize = 35;
+		}else if(cursize <= 25){
+			cursize = 25;
+		}
+		this.font = cursize + 'px'+' Arial';
+		this.x = cvs.width/2;
+		this.y = cvs.height * 0.9;
+	}
 }
 
 //CONTROL THE GAME
@@ -569,11 +658,36 @@ document.addEventListener("click",function(evt){
 	}
 })
 
+function resize() {
+	bgsky.resize();
+	citybkg.resize();
+	citybkg2.resize();
+	bridge.resize();
+	santaSleigh.resize();
+	forgroundcity.resize();
+	stars.resize();
+	win.resize();
+	score.resize();
+	textInstructor.resize();
+	// console.log("ReStart");
+}
+
+window.addEventListener('resize',function(evt){
+	var size = {
+		width: window.innerWidth || document.body.clientWidth,
+	  height: window.innerHeight || document.body.clientHeight
+	}
+	cvs.width = size.width;
+	cvs.height = size.height;
+	resize();
+});
+
+
 function draw(){
-	// ctx.fillStyle = "#70c5ce";
-	// ctx.fillRect(0,0,cvs.width,cvs.height);
 
 	ctx.clearRect(0, 0, cvs.width,cvs.height);
+	ctx.fillStyle = "#4BAEBE";
+	ctx.fillRect(0, 0, cvs.width, cvs.height);
 	bgsky.draw();
 	citybkg.draw();
 	citybkg2.draw();
@@ -603,8 +717,11 @@ function loop(){
 	update();
 	draw();
 	frames ++;
-
+	if(frames<=50){
+		resize();
+	}else if(frames >= 5000){
+		frames = 0;
+	}
 	requestAnimationFrame(loop);
 }
-
 loop();
