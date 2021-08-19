@@ -184,7 +184,7 @@ const macys = {
 	},
 
 	resize : function(){
-		this.ratio = ((cvs.height - santaSleigh.origin_size.h * santaSleigh.size_ratio) * 0.5/this.h);
+		this.ratio = ((cvs.height - santaSleigh.origin_size.h * santaSleigh.size_ratio) * 0.5/this.h) * 0.8;
 		this.y = cvs.height - this.h * this.ratio;
 		this.middleX = (cvs.width - this.w * this.ratio) * 0.5; //santaSleigh.x * 0.9;
 	},
@@ -376,6 +376,8 @@ const stars = {
 		}
 		this.maxH_star = cvs.height * 0.25;
 		this.maxH_cloud = cvs.height * 0.3;
+		this.speed_star = this.ratio;
+		this.speed_cloud = 1.5 * this.speed_star;
 	},
 
 	restart : function() {
@@ -522,14 +524,14 @@ const santaSleigh = {
 	},
 
 	resize : function(){
-		this.size_ratio = 1 + (cvs.width-320)/320 * 0.1;
+		this.size_ratio = 1 + (cvs.height-640)/640 * 0.1;
 		if(this.size_ratio <= 0.8){
 			this.size_ratio = 0.8;
 		}
 		this.x = (cvs.width - this.origin_size.w * this.size_ratio) * 0.5; 
 		this.y = (cvs.height - this.origin_size.h * this.size_ratio) * 0.5;
 		this.maxH0 = cvs.height * 0.4;
-		this.maxH = cvs.height * 0.43;
+		this.maxH = cvs.height * 0.55;
 		this.jump = cvs.height/160;
 		this.gravity = this.jump * 0.05;
 	},
