@@ -158,15 +158,16 @@ storeimg.src = './img/store.png';
 const macys = {
 	x : 150,
 	y : 320,
-	w : 980 * 0.25,
-	h : 699 * 0.25,
+	w : 980,
+	h : 699,
+	ratio : 0.25,
 
-	speed : 0.5,
+	speed : 2.5,
 	middleX : 60,
 
 	draw : function(){
 		if(state.current >= state.end){
-			ctx.drawImage(storeimg,this.x,this.y,this.w,this.h);
+			ctx.drawImage(storeimg,this.x,this.y,this.w * this.ratio,this.h * this.ratio);
 		}
 	},
 
@@ -180,6 +181,17 @@ const macys = {
 				santaSleigh.forzeFrame = santaSleigh.frame;
 			}
 		}
+	},
+
+	resize : function(){
+		this.ratio = ((cvs.height - santaSleigh.origin_size.h * santaSleigh.size_ratio) * 0.5/this.h);
+		this.y = cvs.height - this.h * this.ratio;
+		this.middleX = (cvs.width - this.w * this.ratio) * 0.5; //santaSleigh.x * 0.9;
+	},
+
+	restart : function(){
+		this.x = cvs.width - this.w * this.ratio;
+		this.speed = this.x/200;
 	}
 }
 
@@ -271,7 +283,7 @@ const stars = {
 	},
 
 	update : function(){
-		if(frames%200 == 0){
+		if(frames%150 == 0){
 			this.position_star.push({
 				x : getRandomInt(cvs.width * 0.9,cvs.width),
 				y : getRandomInt(20,this.maxH_star)
@@ -364,6 +376,17 @@ const stars = {
 		}
 		this.maxH_star = cvs.height * 0.25;
 		this.maxH_cloud = cvs.height * 0.3;
+	},
+
+	restart : function() {
+		if(this.position_star.length > 0){
+			this.position_star.splice(0,this.position_star.length);
+			this.size_star.splice(0,this.size_star.length);
+		}
+		if(this.position_cloud.length > 0){
+			this.position_cloud.splice(0,this.position_cloud.length);
+			this.size_cloud.splice(0,this.size_cloud.length);
+		}
 	}
 }
 
@@ -480,7 +503,7 @@ const santaSleigh = {
 				this.y = -1 * this.origin_size.h * this.size_ratio/2;	
 			}
 		}else if(state.current == state.end){
-			// console.log(this.isLandingInitialized);
+			// console.log(this.y);
 			if(!this.isLandingInitialized){
 				this.frame = 0;
 				this.isLandingInitialized = true;
@@ -506,6 +529,13 @@ const santaSleigh = {
 		this.x = (cvs.width - this.origin_size.w * this.size_ratio) * 0.5; 
 		this.y = (cvs.height - this.origin_size.h * this.size_ratio) * 0.5;
 		this.maxH0 = cvs.height * 0.4;
+		this.maxH = cvs.height * 0.43;
+		this.jump = cvs.height/160;
+		this.gravity = this.jump * 0.05;
+	},
+
+	restart : function(){
+		this.isLandingInitialized = false;
 	}
 
 }
@@ -544,9 +574,9 @@ const win = {
 	},
 
 	resize : function(){
-			this.ratio = cvs.width/this.origin_size.w;
+			this.ratio = ((santaSleigh.origin_size.w * santaSleigh.size_ratio)/this.origin_size.w) * 1.9;
 			this.pos.x = (cvs.width - this.origin_size.w * this.ratio) * 0.5; 
-			this.pos.y = (cvs.height - this.origin_size.h * this.ratio) * 0.5;
+			this.pos.y = cvs.height * 0.2;//(cvs.height - this.origin_size.h * this.ratio) * 0.5;
 	}
 }
 
@@ -591,6 +621,10 @@ const score = {
 			this.ratio = 0.25;
 		}
 		this.pos.space = 30 * (this.ratio/0.25);
+	},
+
+	restart : function(){
+		this.score_state = [0,0,0,0,0];
 	}
 }
 
@@ -618,6 +652,7 @@ const textInstructor = {
 			ctx.textAlign = "center";
 			ctx.fillText(this.content[0], this.x, this.y);
 		}else if(state.current == state.over){
+			this.color = "white";
 			ctx.fillText(this.content[1], this.x, this.y);
 		}
 	},
@@ -640,6 +675,7 @@ document.addEventListener("click",function(evt){
 	switch(state.current){
 		case state.getReady:
 			state.current = state.game;
+			restart();
 			break;
 		case state.game:
 			santaSleigh.flap();
@@ -649,11 +685,6 @@ document.addEventListener("click",function(evt){
 			break;
 		case state.over : 
 			state.current = state.getReady;
-			frames = 0;
-			starCounter = 0;
-			score.score_state = [0,0,0,0,0];
-			macys.x = 150;
-			santaSleigh.isLandingInitialized = false;
 			break;
 	}
 })
@@ -669,7 +700,17 @@ function resize() {
 	win.resize();
 	score.resize();
 	textInstructor.resize();
+	macys.resize();
 	// console.log("ReStart");
+}
+
+function restart() {
+	frames = 0;
+	starCounter = 0;
+	santaSleigh.restart();
+	stars.restart();
+	macys.restart();
+	score.restart();
 }
 
 window.addEventListener('resize',function(evt){
